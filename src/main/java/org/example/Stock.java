@@ -1,30 +1,15 @@
 package org.example;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
 
 @Entity
-@Table(name = "author")
 public class Stock {
-    @ManyToOne
-    @MapsId("storeId")
-    Store store;
+         @EmbeddedId
+        private stockId stockId;
 
-    @ManyToOne
-    @MapsId("bookId")
-    Book book;
-    @EmbeddedId
-    private stockId stockId;
-
-    private int quantity;
-
-    public Stock() {
-    }
-
-    public Stock(org.example.stockId stockId, int quantity) {
-        this.stockId = stockId;
-        this.quantity = quantity;
-    }
+        private int quantity;
 
     public org.example.stockId getStockId() {
         return stockId;
@@ -44,6 +29,17 @@ public class Stock {
 
     @Override
     public String toString() {
-        return "Stock{" + "stockId=" + stockId + ", quantity=" + quantity + '}';
+        return "Stock{" +
+                "stockId=" + stockId +
+                ", quantity=" + quantity +
+                '}';
+    }
+
+    public Stock() {
+    }
+
+    public Stock(org.example.stockId stockId, int quantity) {
+        this.stockId = stockId;
+        this.quantity = quantity;
     }
 }

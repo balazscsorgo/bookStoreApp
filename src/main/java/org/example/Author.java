@@ -4,14 +4,13 @@ package org.example;
 import jakarta.persistence.*;
 
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "author")
 public class Author {
-    @OneToMany(mappedBy = "author")
-    List<Book> books;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,29 +21,16 @@ public class Author {
     @Column(name = "fore_name")
     private String ForeName;
 
-    @Column(columnDefinition = "enum('M','F')")
+    @Column(columnDefinition = "sex('M','F')")
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
     @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
+    private Date dateOfBirth;
 
-    public Author() {
-    }
-
-    public Author(Long id, String firstName, String foreName, Sex sex, LocalDate dateOfBirth) {
-        this.id = id;
-        FirstName = firstName;
-        ForeName = foreName;
-        this.sex = sex;
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Author(String firstName, String foreName, Sex sex, LocalDate dateOfBirth) {
-        FirstName = firstName;
-        ForeName = foreName;
-        this.sex = sex;
-        this.dateOfBirth = dateOfBirth;}
+    @OneToMany(fetch = FetchType.EAGER)
+    @MapsId("id")
+    private List<Book> bookList;
 
     public Long getId() {
         return id;
@@ -78,16 +64,42 @@ public class Author {
         this.sex = sex;
     }
 
-    public LocalDate getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public List<Book> getBookList() {
+        return bookList;
+    }
+
+    public void setBookList(List<Book> bookList) {
+        this.bookList = bookList;
     }
 
     @Override
     public String toString() {
-        return "Author{" + "id=" + id + ", FirstName='" + FirstName + '\'' + ", ForeName='" + ForeName + '\'' + ", sex=" + sex + ", dateOfBirth=" + dateOfBirth + '}';
+        return "Author{" +
+                "id=" + id +
+                ", FirstName='" + FirstName + '\'' +
+                ", ForeName='" + ForeName + '\'' +
+                ", sex=" + sex +
+                ", dateOfBirth=" + dateOfBirth +
+                ", bookList=" + bookList +
+                '}';
+    }
+
+    public Author() {
+    }
+
+    public Author(Long id, String firstName, String foreName,Sex sex, Date dateOfBirth) {
+        this.id = id;
+        FirstName = firstName;
+        ForeName = foreName;
+        this.sex = sex;
+        this.dateOfBirth = dateOfBirth;
     }
 }

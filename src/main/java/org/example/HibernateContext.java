@@ -1,12 +1,13 @@
 package org.example;
 
 
-import java.util.Properties;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+
+import java.util.Properties;
 
 public class HibernateContext implements AutoCloseable {
 
@@ -19,9 +20,9 @@ public class HibernateContext implements AutoCloseable {
             Properties props = new Properties();
 
             props.put("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
-            props.put("hibernate.connection.url", "jdbc:mysql://0.0.0.0:3307/csorgo");
-            props.put("hibernate.connection.username", "root");
-            props.put("hibernate.connection.password", "pw");
+            props.put("hibernate.connection.url", System.getenv("pdb_url"));
+            props.put("hibernate.connection.username", System.getenv("pdb_user"));
+            props.put("hibernate.connection.password", System.getenv("pdb_pw"));
 
             props.put("hibernate.current_session_context_class", "thread");
             props.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
@@ -60,4 +61,3 @@ public class HibernateContext implements AutoCloseable {
         }
     }
 }
-
