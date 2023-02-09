@@ -1,14 +1,29 @@
 package org.example;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 
-class App extends View {
-    private Controller controller;
+class App extends Menu {
+
+    public static HibernateContext hibernateContext = new HibernateContext();
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final Controller controller;
+
+    App(Controller controller) {
+        this.controller = controller;
+    }
+
+    public static void main(String[] args) throws Exception {
+        App app = new App(new Controller());
+        try (Scanner sc = new Scanner(System.in)) {
+            app.mainMenu(sc);
+        }
+        System.exit(0);
+    }
 
     private void mainMenu(Scanner sc) throws ParseException {
         String option = "";
@@ -16,70 +31,62 @@ class App extends View {
             switch (option) {
 
                 case "Q" -> {
-                    System.exit(0);
+                    hibernateContext.getSession().flush();
+                    return;
                 }
+
                 case "B" -> {
-                    System.out.println("Id of a new book: ");
-                    Long id = sc.nextLong();
-
                     System.out.println("Title of a new book: ");
-                    String title = sc.next();
-
-                    System.out.println("Id of a new author: ");
-                    Long id1 = sc.nextLong();
+                    String title = sc.nextLine();
 
                     System.out.println("Firstname of a new author: ");
-                    String firstName = sc.next();
+                    String firstName = sc.nextLine();
 
                     System.out.println("Forename of a new author: ");
-                    String foreName = sc.next();
+                    String foreName = sc.nextLine();
 
                     System.out.println("Sex of a new author (M/F): ");
-                    Sex sex = Sex.valueOf(sc.next());
+                    Sex sex = Sex.fromString(sc.nextLine());
 
                     System.out.println("Date of birth of a new author: ");
-                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String dob = sc.next();
-                    Date dateOfBirth = new Date();
+                    LocalDate dateOfBirth;
                     try {
-                        dateOfBirth = sdf.parse(dob);
-                    } catch (ParseException e) {
-                        System.out.println("Parse Exception");
+                        dateOfBirth = LocalDate.parse(sc.nextLine(), dtf);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Unable to parse date!");
+                        return;
                     }
 
                     System.out.println("ISBN of a new book: ");
-                    String isbn = sc.next();
+                    String isbn = sc.nextLine();
 
                     System.out.println("Is the book available (true/false) : ");
-                    boolean available = sc.nextBoolean();
+                    boolean available = Boolean.parseBoolean(sc.nextLine());
 
-                    controller.addAuthor(id1, firstName, foreName,sex,dateOfBirth );
-                    Author a = controller.findAuthorById(id1);
-                    controller.addBook(id, title, a, isbn, available);
+                    Author author = controller.addAndReturnNewAuthor(firstName, foreName, sex, dateOfBirth);
+                    controller.addBook(title, author, isbn, available);
                 }
-                case "C" -> {
-                    System.out.println("Id of a new author: ");
-                    Long id1 = sc.nextLong();
 
+                case "C" -> {
                     System.out.println("Firstname of a new author: ");
-                    String firstName = sc.next();
+                    String firstName = sc.nextLine();
 
                     System.out.println("Forename of a new author: ");
-                    String foreName = sc.next();
+                    String foreName = sc.nextLine();
 
                     System.out.println("Sex of a new author (M/F): ");
-                    Sex sex = Sex.valueOf(sc.next());
+                    String s=sc.nextLine();
+                    Sex sex = Sex.valueOf(s);
 
                     System.out.println("Date of birth of a new author: ");
-                    DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String dob = sc.next();
-                    Date dateOfBirth = new Date();
+                    LocalDate dateOfBirth;
                     try {
-                        dateOfBirth = sdf.parse(dob);
-                    } catch (ParseException e) {
-                        System.out.println("Parse Exception");
+                        dateOfBirth = LocalDate.parse(sc.nextLine(), dtf);
+                    } catch (DateTimeParseException e) {
+                        System.err.println("Unable to parse date!");
+                        return;
                     }
-                    controller.addAuthor(id1, firstName, foreName, sex, dateOfBirth);
+                    controller.addAuthor(firstName, foreName, sex, dateOfBirth);
 
                 }
                 default -> {
@@ -89,23 +96,8 @@ class App extends View {
                 }
             }
             printMenu();
-            System.out.println("What would you like to do?");
+            System.out.println("Option: ");
         }
         while (!"Q".equalsIgnoreCase(option = sc.nextLine()));
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        App a = new App();
-
-
-        try (
-                Scanner sc = new Scanner(System.in);
-                Controller c = new Controller()
-        ) {
-            a.controller = c;
-            a.mainMenu(sc);
-
-        }
     }
 }

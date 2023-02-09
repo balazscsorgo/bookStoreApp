@@ -15,18 +15,16 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-  //  private int quantity;
+    private String name;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
-    private List<Book> bookList;
+    @OneToMany(mappedBy = "store")
+    private List<Stock> books;
 
     public Store() {
     }
 
-    public Store(Long id, List<Book> bookList) {
-        this.id = id;
-    //    this.quantity = quantity;
-        this.bookList = bookList;
+    public Store(Long id) {
+    this.id=id;
     }
 
     public Long getId() {
@@ -37,19 +35,19 @@ public class Store {
         this.id = id;
     }
 
-/*    public int getQuantity() {
-        return quantity;
+    public String getName() {
+        return name;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-*/
-    public List<Book> getBookList() {
-        return bookList;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setBookList(List<Book> bookList) {
-        this.bookList = bookList;
+    public List<Stock> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Stock> books) {
+        this.books = books;
     }
 }
